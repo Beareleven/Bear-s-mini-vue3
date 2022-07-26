@@ -1,4 +1,5 @@
 import { render } from "./render";
+import { createVNode } from "./vnode";
 
 export function createApp(rootComponent){
     return {
@@ -8,8 +9,9 @@ export function createApp(rootComponent){
             // 所有的逻辑操作 都在vNode 上进行处理
 
             // 组件转换为虚拟节点（vNode）
-            const vnode = createApp(rootContainer);
-
+            // rootContainer 根容器
+            // debugger
+            const vnode = createVNode(rootComponent);
             render(vnode, rootContainer);
         }
     }

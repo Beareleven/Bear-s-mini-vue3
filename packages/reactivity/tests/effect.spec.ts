@@ -74,7 +74,7 @@ describe('effect', () => {
     it('stop', () => {
         let dummy;
         const obj = reactive({foo : 1});
-        debugger
+        // debugger
         const runner1  = effect(() => {
             dummy = obj.foo + 1;
             // 第一次（初始化）：dummy = 2
