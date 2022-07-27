@@ -1,4 +1,5 @@
 import { isObject } from "../shared/index";
+import { ShapeFlags } from "../shared/ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 
 export function render(vnode, container){
@@ -12,11 +13,20 @@ function patch(vnode, container){
 
     // componen处理
     // element处理
-    if(typeof vnode.type === "string"){
+    // 解构出vnode的shapeflag
+    const { shapeFlag } = vnode;
+    // 使用与运算符进行查找
+    if(shapeFlag & ShapeFlags.element){
         processElement(vnode, container);
-    }else if(isObject(vnode.type)){
+    }else if(shapeFlag & ShapeFlags.stateful_component){
         processComponent(vnode, container);
     }
+
+    // if(typeof vnode.type === "string"){
+    //     processElement(vnode, container);
+    // }else if(isObject(vnode.type)){
+    //     processComponent(vnode, container);
+    // }
 
 }
 
@@ -58,15 +68,21 @@ function mountElement(vnode: any, container: any) {
 
     // children
     // string array
-    const { children } = vnode;
-
-    if(typeof children === 'string') {
+    const { children, shapeFlag } = vnode;
+    if(shapeFlag & ShapeFlags.text_children){
         el.textContent = children
-    }else if(Array.isArray(children)){
+    }else if(shapeFlag & ShapeFlags.array_children){
         mountChildren(vnode, el)
     }
+    
+    // if(typeof children === 'string') {
+    //     el.textContent = children
+    // }else if(Array.isArray(children)){
+    //     mountChildren(vnode, el)
+    // }
     // props
-    const {props} = vnode;
+    // 渲染 挂载到真实dom节点上
+    const { props } = vnode;
     for(let key in props) {
         const val = props[key];
         el.setAttribute(key, val)
