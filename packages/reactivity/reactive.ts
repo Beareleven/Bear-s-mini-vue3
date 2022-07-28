@@ -1,3 +1,4 @@
+import { isObject } from "../shared/index";
 import { mutableHandlers, readOnlyHandlers, shallowReadOnlyHandlers } from "./baseHandler";
 
 export const enum ReactiveFlags  {
@@ -35,6 +36,11 @@ export function isProxy(value){
 }
 // 可以看到 return new Proxy(raw, readOnlyHandlers); 这个语句是相同的，同样我们也可以进行抽离
 function createActiveObject(raw, baseHandler){
+    // 对象坚持
+    if(!isObject(raw)){
+        console.warn(`target ${raw} 必须是一个对象`);
+        return raw;
+    }
     return new Proxy(raw, baseHandler);
 }
 

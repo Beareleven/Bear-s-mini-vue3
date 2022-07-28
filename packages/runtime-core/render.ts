@@ -70,6 +70,7 @@ function mountElement(vnode: any, container: any) {
     // string array
     const { children, shapeFlag } = vnode;
     if(shapeFlag & ShapeFlags.text_children){
+        // debugger
         el.textContent = children
     }else if(shapeFlag & ShapeFlags.array_children){
         mountChildren(vnode, el)
@@ -85,7 +86,17 @@ function mountElement(vnode: any, container: any) {
     const { props } = vnode;
     for(let key in props) {
         const val = props[key];
-        el.setAttribute(key, val)
+        console.log(key);
+        // 规范 ： on + 事件名 on + Click
+        // 具体的 click ->  重构 -> 通用
+        // 具体 -> 重构 -> 通用
+        const isOn = (key) => /^on[A-Z]/.test(key);
+        if(isOn(key)){
+            const event = key.slice(2).toLocaleLowerCase();
+            el.addEventListener(event, val)
+        }else{
+            el.setAttribute(key, val)
+        }   
     }
 
     container.append(el);

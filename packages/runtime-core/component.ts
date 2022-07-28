@@ -1,18 +1,27 @@
+import { shallowReadOnly } from "../reactivity/reactive";
+import { emit } from "./componentEmit";
+import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
+import { initSlots } from "./componentSlots";
 
 export function createComponentInstance(vnode){
     const component = {
         vnode,
         type: vnode.type,
-        setupState: {}
+        setupState: {},
+        props: {},
+        slots: {},
+        emit: () => {},
     }
+    // 小技巧，使用bind去填充的一个参数，这样用户在传入的时候，就是直接传入第二个了
+    component.emit = emit.bind(null, component) as any;
     return component;
 }
 
 export function setupComponent(instance){
     // TODO
-    // initProps();
-    // initSlots();
+    initProps(instance, instance.vnode.props);
+    initSlots(instance, instance.vnode.children);
 
     // 有状态的组件
     setupStateComponent(instance)
@@ -31,7 +40,9 @@ function setupStateComponent(instance){
         // setup 是可以返回一个function 或者 object的
         // 1. 返回function，我们就认为返回当前组件的一个 render函数
         // 2. 返回object，会把返回的object注入到当前组件的上下文中
-        const setupResult = setup();
+        const setupResult = setup(shallowReadOnly(instance.props), {
+            emit: instance.emit,
+        });
 
         handleSetupResult(instance, setupResult)
     }
