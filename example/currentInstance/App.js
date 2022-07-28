@@ -1,4 +1,4 @@
-import { h , createTextVnode} from '../../lib/bear-s-mini-vue.esm.js'
+import { h , createTextVnode, getCurrentInstance} from '../../lib/bear-s-mini-vue.esm.js'
 import { Foo } from './foo.js';
 
 
@@ -26,6 +26,9 @@ export const App = {
         // return h('div', {}, [h('p', {}, '123'), h('p', {}, '456')]);
     },
     setup(){
+        const instance = getCurrentInstance();
+        console.log('App: ', instance)
+
         return {};
     }
 }
